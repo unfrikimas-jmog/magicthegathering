@@ -1,0 +1,99 @@
+import random
+#importando un mazo 
+deck = []
+with open(r"c:\Users\josem\Downloads\the-ur-dragon--20250528-200136.txt") as deckList:
+    for cards in deckList:
+        deck.append(cards.strip())  
+
+# Keep deck as a list for easier manipulation
+deck_list = deck.copy()  # Make a copy to preserve original
+
+class Player:
+    def __init__(self, playerName: str, playerLife, playerID): 
+        self.playerName = playerName
+        self.hand: list[str] = []
+        self.playerLife = playerLife
+        self.playerID = playerID
+        self.cementery: list[str] = []
+
+    def __str__(self):
+        return self.playerName
+    
+    def show_hand(self):
+        """Display the player's current hand"""
+        print(f"{self.playerName}'s hand:")
+        for i, card in enumerate(self.hand, 1):
+            print(f"  {i}. {card}")
+        print(f"Cards in hand: {len(self.hand)}")
+
+class MagicGame:
+    def __init__(self, players):
+        self.players = players
+        self.deck = deck_list.copy()  # Each game gets a fresh deck
+        self.shuffle_deck()
+    
+    def shuffle_deck(self):
+        """Shuffle the deck"""
+        random.shuffle(self.deck)
+        print("Deck shuffled!")
+    
+    def deal_hand(self, player, cards_to_deal=7):
+        """Deal a specified number of cards to a player (default 7 for Magic)"""
+        if len(self.deck) < cards_to_deal:
+            print(f"Not enough cards in deck! Only {len(self.deck)} cards remaining.")
+            cards_to_deal = len(self.deck)
+        
+        for _ in range(cards_to_deal):
+            if self.deck:  # Check if deck still has cards
+                card = self.deck.pop()  # Remove card from deck
+                player.hand.append(card)  # Add to player's hand
+        
+        print(f"Dealt {cards_to_deal} cards to {player.playerName}")
+    
+    def deal_starting_hands(self, hand_size=7):
+        """Deal starting hands to all players"""
+        for player in self.players:
+            self.deal_hand(player, hand_size)
+    
+    def draw_card(self, player):
+        """Player draws one card from deck"""
+        if self.deck:
+            card = self.deck.pop()
+            player.hand.append(card)
+            print(f"{player.playerName} drew a card: {card}")
+        else:
+            print("Deck is empty!")
+
+    def Millcard(self, player):
+        """Player mills one card from deck"""
+        if self.deck:
+            card = self.deck.pop()
+            player.cementery.append(card)
+            print(f"{player.playerName} mill a card: {card}")
+
+    def scryCard(self, player):
+        if self.deck: 
+            card = self.deck.pop()
+            print(f"{player.playerName} scry one: {card}")
+            deck.append(card)
+        
+if __name__ == "__main__":
+    # Create players
+    player1 = Player("Alice", 20, 1)
+    player2 = Player("Bob", 20, 2)
+    
+    # Create game
+    game = MagicGame([player1, player2])
+    
+    # Deal starting hands (7 cards each)
+    game.deal_starting_hands()
+    
+    # Show players' hands
+    player1.show_hand()
+    print()
+    player2.show_hand()
+    
+   
+    print("\nDrawing additional cards...")
+    game.scryCard(player1)
+    game.scryCard(player2)
